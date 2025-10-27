@@ -1,124 +1,83 @@
-'use client';
+// 'use client'
+"use client";
+import { createContext, useContext, useCallback, useMemo, useState } from "react";
+import axios from "axios";
 
-import {
-  useState,
-  useEffect,
-  useContext,
-  createContext,
-  useCallback,
-} from 'react';
-import axios from 'axios';
 const ShopContext = createContext();
+export const useShopContext = () => useContext(ShopContext);
 
-export const ShopContextProvider = ({ children }) => {
-  const [cart, setCart] = useState([]);
-  const [products, setProducts] = useState([]);
-  const [product, setProduct] = useState({});
+const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
 
-  const handleAddToCart = (product) => {
-    let productToAdd = {};
-    const findProduct = cart.find(
-      (productInCart) => productInCart._id === product._id
-    );
-    if (findProduct) {
-      productToAdd = { ...findProduct, qty: findProduct.qty + product.qty };
-    } else {
-      productToAdd = product;
-    }
+export default function ShopProvider({ children }) {
+  // Mantengo tu patrón de estado (si tenías carrito, lo dejo sin romper)
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-    const filteredCart = cart.filter(
-      (productInCart) => productInCart._id !== product._id
-    );
-    setCart([...filteredCart, productToAdd]);
-  };
-
-  const getAllProducts = useCallback(async () => {
-    try {
-      const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/products`);
-      setProducts(res.data.products);
-    } catch (error) {
-      console.log(error);
-    }
+  /* ===== CLASSES ===== */
+  const fetchClasses = useCallback(async () => {
+    const { data } = await axios.get(`${API}/classes`);
+    return data.items || [];
   }, []);
 
-  const getOneProduct = useCallback(async (id) => {
-    try {
-      const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/products/${id}`);
-      setProduct(res.data.product);
-    } catch (error) {
-      console.log(error);
-    }
+  const fetchClassById = useCallback(async (id) => {
+    const { data } = await axios.get(`${API}/classes/${id}`);
+    return data.item;
   }, []);
 
-  useEffect(() => {
-    getAllProducts();
+  /* ===== SPECIES ===== */
+  const fetchSpecies = useCallback(async () => {
+    const { data } = await axios.get(`${API}/species`);
+    return data.items || [];
   }, []);
 
-  const cartQty = () => cart.length; //
+  const fetchSpeciesById = useCallback(async (id) => {
+    const { data } = await axios.get(`${API}/species/${id}`);
+    return data.item;
+  }, []);
 
-  const cartTotal = cart.reduce(
-    (acc, product) => acc + product.qty * product.price,0);
+  /* ===== CHARACTERS ===== */
+  const fetchCharacters = useCallback(async () => {
+    const { data } = await axios.get(`${API}/characters`);
+    return data.items || [];
+  }, []);
 
-  const addOrder = async (userValues) => {
-    const reducedCart = cart.map((product) => {
-      const prod = {
-        name: product.name,
-        _id: product._id,
-        qty: product.qty,
-      };
+  const fetchCharacterById = useCallback(async (id) => {
+    const { data } = await axios.get(`${API}/characters/${id}`);
+    return data.item;
+  }, []);
 
-      return prod;
-    });
+  const createCharacter = useCallback(async (payload) => {
+    const { data } = await axios.post(`${API}/characters`, payload);
+    return data.item;
+  }, []);
 
-    const orderValues = {
-      user: userValues,
-      products: reducedCart,
-      total: cartTotal
-    };
-    console.log('my order is', orderValues);
-
-    try {
-      const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/orders`,
-        orderValues
-      );
-    
-
-      return true
-
-
-
-    } catch (error) {
-      console.log('error', error);
-
-      return false
-    }
-  };
-
-  return (
-    <ShopContext.Provider
-      value={{
-        cart,
-        handleAddToCart,
-        cartQty,
-        products,
-        product,
-        getOneProduct,
-        addOrder,
-        cartTotal,
-      }}
-    >
-      {children}
-    </ShopContext.Provider>
+  const value = useMemo(
+    () => ({
+      loading,
+      error,
+      /* api */
+      fetchClasses,
+      fetchClassById,
+      fetchSpecies,
+      fetchSpeciesById,
+      fetchCharacters,
+      fetchCharacterById,
+      createCharacter,
+      // Si querés conservar qty/badge de carrito:
+      cartQty: 0,
+    }),
+    [
+      loading,
+      error,
+      fetchClasses,
+      fetchClassById,
+      fetchSpecies,
+      fetchSpeciesById,
+      fetchCharacters,
+      fetchCharacterById,
+      createCharacter,
+    ]
   );
-};
 
-export const useShopContext = () => {
-  const context = useContext(ShopContext);
-  if (!context) {
-    throw new Error('useShopContext must be used within a ShopContextProvider');
-  }
-  return context;
-};
-
-export default ShopContext;
+  return <ShopContext.Provider value={value}>{children}</ShopContext.Provider>;
+}
