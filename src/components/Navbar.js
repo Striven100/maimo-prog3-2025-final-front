@@ -3,7 +3,7 @@ import Link from "next/link";
 import { useShopContext } from "@/contexts/ShopContext";
 
 export default function Navbar() {
-  const { cartQty } = useShopContext(); // lo conservo por compatibilidad
+  const { cartQty } = useShopContext();
 
   return (
     <header className="sticky top-0 z-50 bg-white/80 border-b border-zinc-100 backdrop-blur">

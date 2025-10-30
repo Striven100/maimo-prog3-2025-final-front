@@ -12,7 +12,7 @@ export default function EntityCard({ entity, kind }) {
 
   const href =
     kind === "characters"
-      ? null // no hacemos detail por ahora
+      ? null
       : `/${kind}/${entity?._id}`;
 
   return (

@@ -8,7 +8,6 @@ export default function AddToCartPanel({ id, name, price, image }) {
   const [qty, setQty] = useState(1);
 
   const handleAdd = () => {
-    // Ajustá según la firma real de tu contexto
     addToCart?.({ id, name, price, image, qty });
   };
 

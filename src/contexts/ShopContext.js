@@ -1,4 +1,3 @@
-// 'use client'
 "use client";
 import { createContext, useContext, useCallback, useMemo, useState } from "react";
 import axios from "axios";
@@ -9,7 +8,6 @@ export const useShopContext = () => useContext(ShopContext);
 const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
 
 export default function ShopProvider({ children }) {
-  // Mantengo tu patrón de estado (si tenías carrito, lo dejo sin romper)
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -55,7 +53,6 @@ export default function ShopProvider({ children }) {
     () => ({
       loading,
       error,
-      /* api */
       fetchClasses,
       fetchClassById,
       fetchSpecies,
@@ -63,7 +60,6 @@ export default function ShopProvider({ children }) {
       fetchCharacters,
       fetchCharacterById,
       createCharacter,
-      // Si querés conservar qty/badge de carrito:
       cartQty: 0,
     }),
     [
