@@ -19,17 +19,15 @@ export default function EntityGrid({ loader, kind }) {
         if (mounted) setState((s) => ({ ...s, loading: false }));
       }
     })();
-    return () => {
-      mounted = false;
-    };
+    return () => { mounted = false; };
   }, [loader]);
 
-  if (state.loading) return <p className="p-4">Cargando...</p>;
-  if (state.error) return <p className="p-4 text-red-600">{state.error}</p>;
-  if (!items?.length) return <p className="p-4">Sin resultados.</p>;
+  if (state.loading) return <p className="p-6 text-stone-300">Cargando...</p>;
+  if (state.error) return <p className="p-6 text-red-400">{state.error}</p>;
+  if (!items?.length) return <p className="p-6 text-stone-300">Sin resultados.</p>;
 
   return (
-    <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+    <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
       {items.map((it) => (
         <EntityCard key={it._id} entity={it} kind={kind} />
       ))}

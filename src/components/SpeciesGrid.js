@@ -6,7 +6,7 @@ const SpeciesGrid = () => {
   const { species } = useShopContext()
   return (
     <section className="container mx-auto px-4 pb-16">
-      <h2 className="text-2xl font-bold mb-4">Especies</h2>
+      <h2 className="font-serif text-2xl text-amber-200 mb-4">Especies</h2>
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {species.map(s => (
           <ItemCard
