@@ -4,7 +4,7 @@ import Link from "next/link";
 export default function EntityCard({ entity, kind }) {
   const title = entity?.name || "Sin nombre";
   const subtitle = kind === "classes" ? "Clase" : kind === "species" ? "Especie" : "Personaje";
-  const href = `/details/${entity?._id}`;
+  const href = kind === "classes" ? `/classes/${entity?._id}` : kind === "species" ? `/species/${entity?._id}` : `/characters/${entity?._id}`;
 
   return (
     <div className="rounded-xl border border-stone-800 bg-stone-900/70 p-5 shadow-md hover:shadow-lg transition">
