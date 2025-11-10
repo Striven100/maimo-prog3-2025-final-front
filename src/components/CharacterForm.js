@@ -13,8 +13,15 @@ export default function CharacterForm() {
   useEffect(() => {
     let mounted = true;
     (async () => {
-      const [cls, spc] = await Promise.all([fetchClasses(), fetchSpecies()]);
-      if (mounted) { setClasses(cls); setSpecies(spc); }
+      try {
+        const cls = await fetchClasses();
+        if (mounted) setClasses(cls);
+        
+        const spc = await fetchSpecies();
+        if (mounted) setSpecies(spc);
+      } catch (err) {
+        console.error("No pudimos cargar las clases o especies:", err);
+      }
     })();
     return () => { mounted = false; };
   }, [fetchClasses, fetchSpecies]);
